@@ -52,7 +52,7 @@ def create_db():
     cur.execute("""
     CREATE TABLE empresas(
 
-        ruc TEXT PRIMARY KEY,
+        ruc TEXT,
         nombre TEXT,
         estado TEXT,
         condicion TEXT
@@ -62,6 +62,18 @@ def create_db():
 
 
     conn.commit()
+
+    cur.execute("""
+    PRAGMA journal_mode=WAL
+    """)
+
+    cur.execute("""
+    PRAGMA synchronous=OFF
+    """)
+
+    cur.execute("""
+    PRAGMA temp_store=MEMORY
+    """)
 
 
     with zipfile.ZipFile(ZIP_FILE) as z:
@@ -84,7 +96,7 @@ def create_db():
 
                 count += 1
 
-                if count % 500000 == 0:
+                if count % 100000 == 0:
                     print(
                         f"Procesados: {count}",
                         flush=True
@@ -133,6 +145,19 @@ def create_db():
 
                 conn.commit()
 
+    print("Creando índice RUC...", flush=True)
+
+
+    cur.execute("""
+    CREATE UNIQUE INDEX idx_ruc
+    ON empresas(ruc)
+    """)
+
+
+    conn.commit()
+
+
+    print("Índice creado", flush=True)
 
     conn.close()
 
