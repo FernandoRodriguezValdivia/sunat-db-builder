@@ -5,9 +5,9 @@ import requests
 from tqdm import tqdm
 
 
-URL = "URL_DEL_ZIP_SUNAT"
+URL = "http://www2.sunat.gob.pe/padron_reducido_ruc.zip"
 
-ZIP_FILE = "padron.zip"
+ZIP_FILE = "padron_reducido_ruc.zip"
 
 OUTPUT_DIR = "output"
 
