@@ -159,6 +159,13 @@ def create_db():
 
     print("Índice creado", flush=True)
 
+    # --- NUEVA OPTIMIZACIÓN ANTES DE CERRAR ---
+    print("Optimizando tamaño de base de datos...", flush=True)
+    cur.execute("PRAGMA wal_checkpoint(TRUNCATE);")
+    cur.execute("VACUUM;")
+    conn.commit()
+    # ------------------------------------------
+    
     conn.close()
 
 
