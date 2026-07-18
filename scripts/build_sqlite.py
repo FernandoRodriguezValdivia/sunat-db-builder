@@ -78,6 +78,7 @@ def create_db():
 
             batch=[]
 
+            count = 0
 
             for line in file:
 
