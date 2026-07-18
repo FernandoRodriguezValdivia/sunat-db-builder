@@ -31,31 +31,28 @@ jobs:
         run: |
           python scripts/build_sqlite.py
 
-      - name: Verificar resultado
+      - name: Mostrar resultado
         run: |
           ls -lh output/
 
-      - name: Verificar que exista la BD
+      - name: Verificar integridad SQLite
         run: |
-          test -f output/sunat.sqlite
+          python - <<'PY'
+          import sqlite3
 
-      - name: Subir SQLite a Turso
+          conn = sqlite3.connect("output/sunat.sqlite")
+          r = conn.execute("PRAGMA integrity_check").fetchone()[0]
+          conn.close()
+
+          if r != "ok":
+              raise Exception(r)
+
+          print("SQLite OK")
+          PY
+
+      - name: Subir a Turso
         env:
           TURSO_DATABASE_TOKEN: ${{ secrets.TURSO_DATABASE_TOKEN }}
           TURSO_HOST: ${{ secrets.TURSO_HOST }}
         run: |
-          SIZE=$(stat -c%s output/sunat.sqlite)
-
-          echo "Tamaño SQLite: $SIZE bytes"
-
-          curl \
-            --fail \
-            --show-error \
-            --silent \
-            -X POST \
-            -H "Authorization: Bearer $TURSO_DATABASE_TOKEN" \
-            -H "Content-Length: $SIZE" \
-            --data-binary @output/sunat.sqlite \
-            "https://$TURSO_HOST/v1/upload"
-
-          echo "SQLite subida correctamente a Turso."
+          python scripts/upload_turso.py
