@@ -39,7 +39,9 @@ def download():
 
 def create_db():
 
-    print("Creando SQLite...")
+    print("ENTRANDO A CREATE_DB", flush=True)
+
+    print("Abriendo ZIP...", flush=True)
 
 
     conn = sqlite3.connect(DB_FILE)
@@ -63,6 +65,9 @@ def create_db():
 
 
     with zipfile.ZipFile(ZIP_FILE) as z:
+        print("ZIP abierto", flush=True)
+
+        print(z.namelist(), flush=True)
 
         txt = z.namelist()[0]
 
