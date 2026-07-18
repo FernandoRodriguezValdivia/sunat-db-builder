@@ -1,0 +1,40 @@
+name: Build SUNAT SQLite
+
+on:
+  schedule:
+    # Todos los días 02:00 AM hora Perú aproximadamente UTC-5, que es 07:00 AM UTC
+    # GitHub usa UTC
+    - cron: '0 7 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+
+      - name: Ejecutar construcción SQLite
+        run: |
+          python scripts/build_sqlite.py
+
+
+      - name: Mostrar resultado
+        run: |
+          ls -lh output/
