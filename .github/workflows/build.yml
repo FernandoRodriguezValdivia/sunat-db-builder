@@ -50,9 +50,32 @@ jobs:
           print("SQLite OK")
           PY
 
-      - name: Subir a Turso
-        env:
-          TURSO_DATABASE_TOKEN: ${{ secrets.TURSO_DATABASE_TOKEN }}
-          TURSO_HOST: ${{ secrets.TURSO_HOST }}
+      - name: Instalar Turso CLI
         run: |
-          python scripts/upload_turso.py
+          curl -sSfL https://get.tur.so/install.sh | bash
+          echo "$HOME/.turso" >> $GITHUB_PATH
+
+      - name: Verificar Turso
+        run: |
+          turso --version
+
+      - name: Login Turso
+        env:
+          TURSO_API_TOKEN: ${{ secrets.TURSO_API_TOKEN }}
+        run: |
+          turso auth login --token "$TURSO_API_TOKEN"
+
+      - name: Ayuda import
+        run: |
+          turso db import --help
+
+      - name: Importar y reemplazar Base de Datos en Turso
+        run: |
+          if turso db show sunat &>/dev/null; then
+            echo "La base de datos existe. Eliminándola..."
+            turso db destroy sunat --yes
+          else
+            echo "La base de datos no existe."
+          fi
+          echo "Subiendo archivo desde output/sunat.sqlite al grupo 'test'..."
+          turso db import --group test output/sunat.sqlite
