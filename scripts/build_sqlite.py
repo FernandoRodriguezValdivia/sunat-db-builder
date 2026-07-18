@@ -81,6 +81,14 @@ def create_db():
 
             for line in file:
 
+                count += 1
+
+                if count % 10000 == 0:
+                    print(
+                        f"Procesados: {count}",
+                        flush=True
+                    )
+
                 row=line.decode(
                     "utf-8",
                     errors="ignore"
