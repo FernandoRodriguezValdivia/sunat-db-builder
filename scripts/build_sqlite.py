@@ -125,6 +125,15 @@ def create_db():
 
 
 download()
+
+print("PASO 1: descarga finalizada", flush=True)
+
+print(
+    "Tamaño ZIP:",
+    os.path.getsize(ZIP_FILE),
+    flush=True
+)
+
 create_db()
 
 
