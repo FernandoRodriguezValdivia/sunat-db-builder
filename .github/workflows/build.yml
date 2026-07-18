@@ -59,17 +59,19 @@ jobs:
         run: |
           turso --version
 
-      - name: Login Turso
-        env:
-          TURSO_API_TOKEN: ${{ secrets.TURSO_API_TOKEN }}
-        run: |
-          turso auth login --token "$TURSO_API_TOKEN"
+      # - name: Login Turso
+      #   env:
+      #     TURSO_API_TOKEN: ${{ secrets.TURSO_API_TOKEN }}
+      #   run: |
+      #     turso auth login --token "$TURSO_API_TOKEN"
 
       - name: Ayuda import
         run: |
           turso db import --help
 
       - name: Importar y reemplazar Base de Datos en Turso
+        env:
+          TURSO_API_TOKEN: ${{ secrets.TURSO_API_TOKEN }}
         run: |
           if turso db show sunat &>/dev/null; then
             echo "La base de datos existe. Eliminándola..."
