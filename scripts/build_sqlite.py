@@ -145,6 +145,11 @@ def create_db():
 
                 conn.commit()
 
+            print(
+                f"TOTAL PROCESADOS: {count}",
+                flush=True
+            )
+
     print("Creando índice RUC...", flush=True)
 
 
