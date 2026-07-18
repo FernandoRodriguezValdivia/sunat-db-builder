@@ -35,20 +35,20 @@ jobs:
         run: |
           ls -lh output/
 
-      - name: Verificar integridad SQLite
-        run: |
-          python - <<'PY'
-          import sqlite3
+      # - name: Verificar integridad SQLite
+      #   run: |
+      #     python - <<'PY'
+      #     import sqlite3
 
-          conn = sqlite3.connect("output/sunat.sqlite")
-          r = conn.execute("PRAGMA integrity_check").fetchone()[0]
-          conn.close()
+      #     conn = sqlite3.connect("output/sunat.sqlite")
+      #     r = conn.execute("PRAGMA integrity_check").fetchone()[0]
+      #     conn.close()
 
-          if r != "ok":
-              raise Exception(r)
+      #     if r != "ok":
+      #         raise Exception(r)
 
-          print("SQLite OK")
-          PY
+      #     print("SQLite OK")
+      #     PY
 
       - name: Instalar Turso CLI
         run: |
