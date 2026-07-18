@@ -18,23 +18,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-
       - name: Preparar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-
       - name: Instalar dependencias
         run: |
           pip install -r requirements.txt
 
-
-      - name: Ejecutar construcción SQLite
+      - name: Generar SQLite
         run: |
           python scripts/build_sqlite.py
 
-
-      - name: Mostrar resultado
+      - name: Verificar resultado
         run: |
           ls -lh output/
+
+      - name: Verificar que exista la BD
+        run: |
+          test -f output/sunat.sqlite
+
+      - name: Subir SQLite a Turso
+        env:
+          TURSO_DATABASE_TOKEN: ${{ secrets.TURSO_DATABASE_TOKEN }}
+          TURSO_HOST: ${{ secrets.TURSO_HOST }}
+        run: |
+          SIZE=$(stat -c%s output/sunat.sqlite)
+
+          echo "Tamaño SQLite: $SIZE bytes"
+
+          curl \
+            --fail \
+            --show-error \
+            --silent \
+            -X POST \
+            -H "Authorization: Bearer $TURSO_DATABASE_TOKEN" \
+            -H "Content-Length: $SIZE" \
+            --data-binary @output/sunat.sqlite \
+            "https://$TURSO_HOST/v1/upload"
+
+          echo "SQLite subida correctamente a Turso."
